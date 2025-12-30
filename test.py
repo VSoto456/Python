@@ -7,23 +7,31 @@ trabajadores = [
 
 def Main():
     try:
-        respuesta = int(input("Gestion de trabajadores\n1. lista de trabajadores\n2. Buscar nombre, edad o rut\n3. Salir\n"))
+        respuesta = int(input("Gestion de trabajadores\n1. lista de trabajadores\n2. Buscar\n3. Añadir trabajador\n4. Eliminar trabajador\n5. Salir\n"))
     except ValueError:
         print("Opcion no valida (Ingrese un numero)")
         Main()
-    if respuesta <= 0 or respuesta > 3:
+    if respuesta <= 0 or respuesta > 5:
         print("Opcion no validad")
     else:
         if respuesta == 1: # Mostrar lista de trabajadores
             for i in trabajadores:
                 print(f"nombre: {i['nombre']}, edad: {i['edad']}, Rut: {i['rut']}")
+
         elif respuesta == 2: # Funcion de busqueda
             Busqueda()
-        elif respuesta == 3: # Salir
+
+        elif respuesta == 3: # Añadir trabajadores
+            Añadir()
+
+        elif respuesta == 4: # Eliminar trabajador
+            Eliminar()
+
+        elif respuesta == 5: # Salir
             print("Saliendo...")
             breakpoint
 
-def Busqueda():
+def Busqueda(): # Funcion de busqueda de trabajadores
     opcion = str(input("Buscar por:\n1. Nombre\n2. Edad\n3. Rut\n4. Volver\n"))
 
     if opcion == "4":
@@ -68,5 +76,41 @@ def Busqueda():
             if not encontrado:
                 print("Trabajador encontrado")
 
-while True: 
+def Añadir(): # Funcion de añadir trabajadores
+
+    nombre = input("Nombre: ")
+    edad = input("Edad: ")
+    rut = input("Rut: ")
+
+    rutexistente = any(i['rut'] == rut for i in trabajadores)
+
+    if rutexistente:
+        print("Valores no validos")
+        Main()
+
+    else:
+        nuevoTrabajador = {"nombre": nombre, "edad": edad, "rut": rut}
+        trabajadores.append(nuevoTrabajador)
+        print(f"Se añadio el trabajador {nombre} a la lista")
+        Main()
+
+def Eliminar(): # Funcion de eliminar trabajadores
+    if not trabajadores:
+        print("Lista vacia")
+        Main()
+    try:
+        trabajador = input("Ingrese el rut de trabajador a eliminar: ")
+    except ValueError:
+        print("Trabajador no encontrado")
+        Main()
+    for i in trabajadores:
+        if i['rut'] == trabajador:
+            print(f"trabajador rut {trabajador} eliminado")
+            trabajadores.remove(i)
+            Main()
+        else:
+            print("Error")
+            Main()
+
+while True: # Bucle principal
     Main()
