@@ -1,9 +1,27 @@
-# Lista de trabajadores
-trabajadores = [
-    {"ID": 1, "nombre": "Administrador", "edad": "X", "rut": "123456789-0"},
-    {"ID": 2, "nombre": "Usuario", "edad": "Y", "rut": "012345678-9"},
-    {"ID": 3, "nombre": "Test", "edad": "Z", "rut": "098765432-1"}
-]
+import json
+import os
+
+ARCHIVO = "trabajadores.json"  # Lista de trabajadores
+
+
+def cargar_trabajadores():  # Cargar trabajadores desde el archivo JSON
+    if os.path.exists(ARCHIVO):
+        with open(ARCHIVO, "r", encoding="utf-8") as file:
+            return json.load(file)
+    return []
+
+# Guardar trabajadores en el archivo JSON
+
+
+def guardar_trabajadores(trabajadores):
+    with open(ARCHIVO, "w") as file:
+        json.dump(trabajadores, file, indent=4, ensure_ascii=False)
+
+
+# Cargar la lista de trabajadores al iniciar el programa
+
+
+trabajadores = cargar_trabajadores()
 
 
 def Main():  # Funcion principal
@@ -25,13 +43,18 @@ def Main():  # Funcion principal
         print("Opcion no validad")
     else:
         if respuesta == 1:  # Mostrar lista de trabajadores
-            for i in trabajadores:
-                print(
-                    f" ID: {i['ID']},"
-                    f" Nombre: {i['nombre']},"
-                    f" Edad: {i['edad']},"
-                    f" Rut: {i['rut']}"
-                    )
+            if not trabajadores:
+                print("Lista vacia")
+                Main()
+            else:
+                for i in trabajadores:
+                    print(
+                        f" ID: {i['ID']},"
+                        f" Nombre: {i['nombre']},"
+                        f" Edad: {i['edad']},"
+                        f" Rut: {i['rut']}"
+                        )
+                    Main()
 
         elif respuesta == 2:  # Funcion de busqueda
             Busqueda()
@@ -131,7 +154,7 @@ def Busqueda():  # Funcion de busqueda de trabajadores
             busqueda = input("Ingrese el ID del trabajador")
             encontrado = False
             for i in trabajadores:
-                if i['ID'] == trabajadores:
+                if i['ID'] == int(busqueda):
                     print(
                         "Trabajador encontrado\n"
                         f"ID: {i['ID']},"
@@ -174,6 +197,7 @@ def Añadir():  # Funcion de añadir trabajadores
                             }
         trabajadores.append(nuevoTrabajador)
         trabajadores.sort(key=lambda x: x["ID"])
+        guardar_trabajadores(trabajadores)
         print(f"Se añadio el trabajador {nombre} a la lista")
         Main()
 
@@ -184,7 +208,7 @@ def Eliminar():  # Funcion de eliminar trabajadores
         print("Lista vacia")
         Main()
     try:
-        trabajador = int(input("Ingrese el ID de trabajador a eliminar: "))
+        trabajador = int(input("Ingrese el ID del trabajador a eliminar: "))
     except ValueError:
         print("Trabajador no encontrado")
         Main()
@@ -192,8 +216,9 @@ def Eliminar():  # Funcion de eliminar trabajadores
 
     for i in trabajadores:
         if i['ID'] == trabajador:
-            print(f"trabajador rut {trabajador} eliminado")
+            print(f"trabajador ID {trabajador} eliminado")
             trabajadores.remove(i)
+            guardar_trabajadores(trabajadores)
             encontrado = True
             Main()
     if not encontrado:
@@ -215,6 +240,7 @@ def Editar():  # Funcion de editar datos
             i["nombre"] = nombre
             i["edad"] = edad
             i["rut"] = rut
+            guardar_trabajadores(trabajadores)
             print("Datos editados exitosamente")
             print(
                 f"ID: {i['ID']},"
@@ -225,9 +251,9 @@ def Editar():  # Funcion de editar datos
             encontrado = True
             Main()
 
-        if not encontrado:
-            print("Trabajador no encontrado")
-            Main()
+    if not encontrado:
+        print("Trabajador no encontrado")
+        Main()
 
 
 while True:  # Bucle principal
